@@ -1,0 +1,76 @@
+:: Main Menu
+<div style="text-align:center; font-size:24px; padding:20px;">
+  <h1>Welcome to the Rabbithole</h1>
+  <p>Click below to start your journey.</p>
+  <button id="startButton" style="font-size:20px; padding:15px; background-color:#000; color:#fff; border-radius:10px; text-decoration:none;">
+    Rabbitholin'
+  </button>
+  
+  <!-- Hidden video player container -->
+  <div id="playerContainer" style="display:none; margin-top:20px;">
+    <div id="player"></div>
+  </div>
+</div>
+
+<script>
+  let videoIndex = 0;
+  const videoList = [
+    "r3-Y31ONZuI", // First Video
+    "zBkuNpgACH0", // Second Video (Updated)
+    "LzxCJzM4xLo"  // Third Video
+  ];
+
+  let player;
+
+  // Function to load the YouTube player and start the first video
+  function loadYouTubePlayer(videoId) {
+    if (player) {
+      player.loadVideoById(videoId); // Use loadVideoById instead of creating a new player each time
+    } else {
+      player = new YT.Player("player", {
+        height: "315",
+        width: "560",
+        videoId: videoId,
+        playerVars: {
+          "autoplay": 1, // Start automatically
+          "rel": 0,      // Disable related videos at the end
+          "controls": 1, // Show controls
+          "modestbranding": 1, // Hide YouTube branding
+          "enablejsapi": 1, // Allow JS API control
+          "fs": 1 // Enable fullscreen option
+        },
+        events: {
+          "onStateChange": onPlayerStateChange
+        }
+      });
+    }
+  }
+
+  // Start button click handler
+  document.getElementById("startButton").addEventListener("click", function() {
+    document.getElementById("playerContainer").style.display = "block"; // Show the player
+    loadYouTubePlayer(videoList[videoIndex]); // Start first video
+  });
+
+  // Detect when the video ends and load the next one
+  function onPlayerStateChange(event) {
+    if (event.data === YT.PlayerState.ENDED) {
+      videoIndex++;
+      if (videoIndex < videoList.length) {
+        loadYouTubePlayer(videoList[videoIndex]); // Load next video automatically
+      }
+    }
+  }
+
+  // Load the YouTube API script asynchronously
+  var tag = document.createElement("script");
+  tag.src = "https://www.youtube.com/iframe_api";
+  var firstScriptTag = document.getElementsByTagName("script")[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+  // When the API is ready, load the first video
+  window.onYouTubeIframeAPIReady = function() {
+    // The first video is loaded when the API is ready
+  }
+</script>
+
